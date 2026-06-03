@@ -204,6 +204,29 @@ func TestDoMigrate(t *testing.T) {
 		}
 	})
 
+	t.Run("migrate_dryrun_with_softlink", func(t *testing.T) {
+		srcdir := initGitRepo(t, filepath.Join(tmpdir, "sources_soft_dry", "main"),
+			"https://github.com/soft-dry/proj.git")
+
+		out, _, err := capture(func() {
+			a := newApp()
+			a.Run(context.Background(), []string{"ghq", "migrate", "--dry-run", "--softlink", srcdir})
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if !strings.Contains(out, "Would migrate") {
+			t.Errorf("expected dry-run migration message, got: %s", out)
+		}
+		if !strings.Contains(out, "softlink") {
+			t.Errorf("expected softlink mention in dry-run, got: %s", out)
+		}
+		if _, err := os.Stat(srcdir); os.IsNotExist(err) {
+			t.Error("source should still exist in dry-run mode")
+		}
+	})
+
 	// Test case: worktree inside the repo directory moves along with it
 	t.Run("migrate_with_internal_worktree", func(t *testing.T) {
 		srcdir := initGitRepo(t, filepath.Join(tmpdir, "sources_wt_int", "main"),
@@ -370,6 +393,38 @@ func TestMigrateEdgeCases(t *testing.T) {
 		// Check that the error message mentions unsupported VCS
 		if e != nil && !strings.Contains(e.Error(), "not supported") {
 			t.Errorf("expected 'not supported' error, got: %v", e)
+		}
+	})
+
+	t.Run("migrate_with_softlink", func(t *testing.T) {
+		srcdir := initGitRepo(t, filepath.Join(tmpdir, "sources_soft", "main"),
+			"https://github.com/soft-user/proj.git")
+
+		a := newApp()
+		e := a.Run(context.Background(), []string{"ghq", "migrate", "-y", "--softlink", srcdir})
+		if e != nil {
+			t.Fatal(e)
+		}
+
+		dest := filepath.Join(tmpdir, "github.com", "soft-user", "proj")
+		if info, err := os.Stat(dest); err != nil || !info.IsDir() {
+			t.Fatalf("dest not found or not a directory: %v", err)
+		}
+
+		info, err := os.Lstat(srcdir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if info.Mode()&os.ModeSymlink == 0 {
+			t.Fatalf("source should be a symlink, mode=%v", info.Mode())
+		}
+
+		linkTarget, err := os.Readlink(srcdir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if filepath.Clean(linkTarget) != dest {
+			t.Fatalf("symlink target = %q, want %q", linkTarget, dest)
 		}
 	})
 }
