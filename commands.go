@@ -117,7 +117,7 @@ var commandDocs = map[string]commandDoc{
 	"create":  {"", "[--ignore-host] <project>|<user>/<project>|<host>/<user>/<project>"},
 	"rm":      {"", "[--ignore-host] <project>|<user>/<project>|<host>/<user>/<project>"},
 	"root":    {"", "[-all]"},
-	"migrate": {"", "[-y] [--dry-run] [--ignore-host] <repository-directory>"},
+	"migrate": {"", "[-y] [--dry-run] [--ignore-host] [--softlink] <repository-directory>"},
 }
 
 // Makes template conditionals to generate per-command documents.
@@ -159,5 +159,6 @@ var commandMigrate = &cli.Command{
 		&cli.BoolFlag{Name: "y", Usage: "Skip confirmation prompt"},
 		&cli.BoolFlag{Name: "dry-run", Usage: "Show what would happen without moving"},
 		&cli.BoolFlag{Name: "ignore-host", Usage: "Ignore the repository host in local path naming"},
+		&cli.BoolFlag{Name: "softlink", Usage: "Leave a symlink at the old path that points to the new location"},
 	},
 }
