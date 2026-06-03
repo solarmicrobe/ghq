@@ -18,6 +18,7 @@ func doMigrate(ctx context.Context, cmd *cli.Command) error {
 	var (
 		repoDir     = cmd.Args().First()
 		dry         = cmd.Bool("dry-run")
+		softlink    = cmd.Bool("softlink")
 		skipConfirm = cmd.Bool("y")
 		w           = cmd.Root().Writer
 	)
@@ -144,6 +145,9 @@ func doMigrate(ctx context.Context, cmd *cli.Command) error {
 		if hasWorktrees {
 			fmt.Fprintf(w, "Would run 'git worktree repair' to update linked worktrees\n")
 		}
+		if softlink {
+			fmt.Fprintf(w, "Would create a softlink from %s to %s\n", absDir, destPath)
+		}
 		return nil
 	}
 
@@ -167,6 +171,12 @@ func doMigrate(ctx context.Context, cmd *cli.Command) error {
 	// Move the repository
 	if err := moveDir(absDir, destPath); err != nil {
 		return fmt.Errorf("failed to move repository: %w", err)
+	}
+
+	if softlink {
+		if err := os.Symlink(destPath, absDir); err != nil {
+			return fmt.Errorf("failed to create softlink from %q to %q: %w", absDir, destPath, err)
+		}
 	}
 
 	// Repair linked worktrees so their .git files reference the new location.
