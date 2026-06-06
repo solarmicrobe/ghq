@@ -1,0 +1,33 @@
+version: 1
+
+upstream:
+  remote: upstream
+  branch: master
+
+integration:
+  branch: integration/latest
+
+features:
+  - id: codex
+    branch: docs/codex
+    description: >
+      Adds passport/context files and patch-stack.yaml
+      so we can always start back with a semi-clean
+      integration if we need to try everytying again.
+    status: active
+    order: 0
+
+  - id: ignore-host
+    branch: codex/ignore-host-naming
+    description: >
+      Adds --ignore-host option to allow repositories
+      to be stored without host directory prefixes.
+    status: active
+    order: 10
+
+  - id: create-symlink
+    branch: feat/redirect-symlink-after
+    description: >
+      Adds symlink creation support after cloning.
+    status: active
+    order: 20
