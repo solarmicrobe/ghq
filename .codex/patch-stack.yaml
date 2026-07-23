@@ -7,6 +7,10 @@ upstream:
 integration:
   branch: integration/latest
 
+path:
+  start: master
+  finish: integration/latest
+
 features:
   - id: codex
     branch: docs/codex
@@ -31,3 +35,11 @@ features:
       Adds symlink creation support after cloning.
     status: active
     order: 20
+
+  - id: solarmicrobe-releases
+    branch: release/solarmicrobe-releases
+    description: >
+      Adds fork release support so tags from integration/latest
+      can publish solarmicrobe-specific GitHub releases.
+    status: active
+    order: 30
