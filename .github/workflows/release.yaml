@@ -3,6 +3,7 @@ on:
   push:
     tags:
     - "v[0-9]+.[0-9]+.[0-9]+"
+    - "v[0-9]+.[0-9]+.[0-9]+-solarmicrobe.[0-9]+"
 permissions:
   contents: write
   packages: write
@@ -17,4 +18,5 @@ jobs:
         persist-credentials: false
     - uses: ./.github/actions/release
       with:
+        tag: ${{ github.ref_name }}
         token: ${{ secrets.GITHUB_TOKEN }}
