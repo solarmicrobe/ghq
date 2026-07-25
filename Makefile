@@ -1,6 +1,10 @@
 VERSION = $(shell godzil show-version)
+ifeq ($(strip $(RELEASE_TAG)),)
+override RELEASE_TAG := v$(VERSION)
+endif
+BUILD_VERSION ?= $(patsubst v%,%,$(RELEASE_TAG))
 CURRENT_REVISION = $(shell git rev-parse --short HEAD)
-BUILD_LDFLAGS = "-s -w -X main.revision=$(CURRENT_REVISION)"
+BUILD_LDFLAGS = "-s -w -X main.version=$(BUILD_VERSION) -X main.revision=$(CURRENT_REVISION)"
 VERBOSE_FLAG = $(if $(VERBOSE),-v)
 u := $(if $(update),-u)
 
@@ -38,7 +42,7 @@ release: devel-deps
 CREDITS: devel-deps go.sum
 	godzil credits -w
 
-DIST_DIR = dist/v$(VERSION)
+DIST_DIR = dist/$(RELEASE_TAG)
 .PHONY: crossbuild
 crossbuild: CREDITS
 	rm -rf $(DIST_DIR)
@@ -48,4 +52,4 @@ crossbuild: CREDITS
 
 .PHONY: upload
 upload:
-	ghr -body="$$(godzil changelog --latest -F markdown)" v$(VERSION) $(DIST_DIR)
+	ghr -body="$$(godzil changelog --latest -F markdown)" $(RELEASE_TAG) $(DIST_DIR)
