@@ -16,7 +16,8 @@ runs:
       go-version-file: go.mod
   - name: release
     run: |
-      make crossbuild upload
+      make crossbuild upload RELEASE_TAG="${RELEASE_TAG}"
     shell: bash
     env:
       GITHUB_TOKEN: ${{ inputs.token }}
+      RELEASE_TAG: ${{ inputs.tag }}
