@@ -1,0 +1,36 @@
+version: 1
+
+upstream:
+  remote: upstream
+  branch: master
+
+integration:
+  branch: integration/latest
+
+path:
+  start: master
+  finish: integration/latest
+
+features:
+  - id: ignore-host
+    branch: codex/ignore-host-naming
+    description: >
+      Adds --ignore-host option to allow repositories
+      to be stored without host directory prefixes.
+    status: active
+    order: 10
+
+  - id: create-symlink
+    branch: feat/redirect-symlink-after
+    description: >
+      Adds symlink creation support after cloning.
+    status: active
+    order: 20
+
+  - id: solarmicrobe-releases
+    branch: release/solarmicrobe-releases
+    description: >
+      Adds fork release support so tags from integration/latest
+      can publish solarmicrobe-specific GitHub releases.
+    status: active
+    order: 30
