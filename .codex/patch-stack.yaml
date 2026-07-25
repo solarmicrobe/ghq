@@ -12,15 +12,6 @@ path:
   finish: integration/latest
 
 features:
-  - id: codex
-    branch: docs/codex
-    description: >
-      Adds passport/context files and patch-stack.yaml
-      so we can always start back with a semi-clean
-      integration if we need to try everytying again.
-    status: active
-    order: 0
-
   - id: ignore-host
     branch: codex/ignore-host-naming
     description: >
