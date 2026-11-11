@@ -3,7 +3,7 @@ on:
   push:
     tags:
     - "v[0-9]+.[0-9]+.[0-9]+"
-    - "v[0-9]+.[0-9]+.[0-9]+-solarmicrobe.[0-9]+"
+    - 'v[0-9]+.[0-9]+.[0-9]+\+*'
 permissions:
   contents: write
   packages: write
@@ -21,7 +21,7 @@ jobs:
         tag: ${{ github.ref_name }}
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: dispatch homebrew tap update
-      if: contains(github.ref_name, '-solarmicrobe.')
+      if: contains(github.ref_name, '+')
       env:
         HOMEBREW_TAP_DISPATCH_TOKEN: ${{ secrets.HOMEBREW_TAP_DISPATCH_TOKEN }}
         RELEASE_SHA: ${{ github.sha }}

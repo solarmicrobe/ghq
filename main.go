@@ -9,7 +9,7 @@ import (
 	"github.com/x-motemen/ghq/logger"
 )
 
-var version = "1.10.1"
+var version = "1.10.1+ignore-host.symlink"
 
 var revision = "HEAD"
 
